@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  labels:
+    release: {{ .Release.Name }}
+spec:
+  selector:
+    matchLabels:
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        release: {{ .Release.Name }}
+    spec:
+      serviceAccount: {{ .Release.Namespace }}-pravega
+      containers:
+      - name: gateway
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 8080
+            name: http
+        env:
+          - name: PRAVEGA_CONTROLLER
+            value: "{{ .Values.pravega.controller }}"
+          - name: PRAVEGA_SCOPE
+            value: "{{ .Release.Namespace }}"
+          - name: PRAVEGA_STREAM
+            value: "{{ .Values.pravega.stream }}"
+          - name: PRAVEGA_MIN_NUM_SEGMENTS
+            value: "{{ .Values.pravega.min_segments }}"
+          - name: PRAVEGA_SCALE_FACTOR
+            value: "{{ .Values.pravega.scale_factor }}"
+          - name: PRAVEGA_TARGET_RATE_EVENTS_PER_SEC
+            value: "{{ .Values.pravega.target_rate_events_per_sec }}"

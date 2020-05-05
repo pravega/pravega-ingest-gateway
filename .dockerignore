@@ -1,0 +1,9 @@
+.git
+.gradle
+.idea
+charts
+env
+gradle
+gateway/build
+gateway/out
+scripts

@@ -1,0 +1,12 @@
+image:
+  repository: claudiofahey/pravega-ingest-gateway
+  tag: 0.0.1
+ingress:
+  enabled: true
+  host: pravega-ingest-gateway.cf03.intranet.nautilus-platform-dev.com
+pravega:
+  controller: "tcp://nautilus-pravega-controller.nautilus-pravega.svc.cluster.local:9090"
+  stream: "examples"
+  min_segments: 1
+  scale_factor: 2
+  target_rate_events_per_sec: 100000
