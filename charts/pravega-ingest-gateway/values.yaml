@@ -3,7 +3,16 @@ image:
   tag: 0.0.1
 ingress:
   enabled: true
-  host: pravega-ingest-gateway.cf03.intranet.nautilus-platform-dev.com
+  annotations:
+    kubernetes.io/ingress.class: nginx-nautilus
+    kubernetes.io/tls-acme: "true"
+  hosts:
+    - pravega-ingest-gateway.examples.xorn.em.sdp.hop.lab.emc.com
+  tls:
+    - hosts:
+        - pravega-ingest-gateway.examples.xorn.em.sdp.hop.lab.emc.com
+      # If secretName is not provided, a self-signed certificate will be used.
+      #secretName: pravega-ingest-gateway-tls
 pravega:
   controller: "tcp://nautilus-pravega-controller.nautilus-pravega.svc.cluster.local:9090"
   stream: "examples"

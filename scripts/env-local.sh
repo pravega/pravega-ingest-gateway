@@ -11,3 +11,5 @@ pravega-ingest-gateway \
 # Below for running in Docker
 export HOST_IP=10.246.27.131
 export PRAVEGA_CONTROLLER=tcp://${HOST_IP}:9090
+
+export GATEWAY_URL=https://pravega-ingest-gateway.examples.xorn.em.sdp.hop.lab.emc.com
