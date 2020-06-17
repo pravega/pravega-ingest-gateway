@@ -3,21 +3,29 @@
 The Pravega Ingest Gateway is a simple HTTP server that can be used to write
 JSON events to a Pravega stream.
 
-# Run Gateway in Dell EMC Streaming Data Platform (SDP)
+### Deploy to SDP using Helm
 
-1. Edit the file charts/pravega-ingest-gateway/values.yaml as needed.
+1. Copy the file `scripts/env-sample.sh` to `scripts/env-local.sh`.
+   This script will contain parameters for your environment.
+   
+2. You can enable TLS (HTTPS) with a private Certificate Authority with these steps.
+   This method is intended only for development and testing environments.
+   ```shell script
+   cd ssl
+   ./create-dev-all.sh
+   ./load-secrets.sh
+   ```
 
-2. Build Docker image. This is only needed if changes are made.
+3. Copy the sample values file from `values/samples/pravega-ingest-gateway.yaml` to
+   `values/local/pravega-ingest-gateway.yaml` or any other destination.
+   You may name this file anything, but you must use alphanumeric characters and dashes only.
 
-```
-scripts/build.sh
-```
-
-3. Deploy using Helm.
-
-```
-scripts/deploy.sh
-```
+4. Edit this file to use your Pravega stream name and HTTP server FQDN.
+   
+5. Launch the Flink job using Helm.
+   ```shell script
+   scripts/deploy.sh values/local/pravega-ingest-gateway.yaml
+   ```
 
 # Run Gateway in Docker
 
