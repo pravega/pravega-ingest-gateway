@@ -22,27 +22,32 @@ JSON events to a Pravega stream.
 
 4. Edit this file to use your Pravega stream name and HTTP server FQDN.
    
-5. Launch the Flink job using Helm.
+5. Deploy the Pravega Ingest Gateway using Helm.
    ```shell script
    scripts/deploy.sh values/local/pravega-ingest-gateway.yaml
    ```
 
+6. Send a test event.
+   ```shell script
+   scripts/send-test-event.sh
+   ```
+
 # Run Gateway in Docker
 
-```
+```shell script
 scripts/build.sh
 scripts/deploy-docker.sh
 ```
 
 # Run Gateway Locally
 
-```
+```shell script
 export PRAVEGA_CONTROLLER=tcp://localhost:9090
 ../gradlew run
 ```
 
 # Send Test Event
 
-```
+```shell script
 scripts/send-test-event.sh
 ```
