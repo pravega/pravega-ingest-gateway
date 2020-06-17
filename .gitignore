@@ -1,17 +1,17 @@
 .gradle
+.gradletasknamecache
+.idea/
 build/
 data/
 out/
 
-# Ignore Gradle GUI config
-gradle-app.setting
-
-# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
-!gradle-wrapper.jar
-
-# Cache of project
-.gradletasknamecache
-
-.idea/
+*.csr
 *.iml
+*.key
+*.pem
+*.srl
 *.tgz
+*-local.sh
+
+gradle-app.setting
+!gradle-wrapper.jar

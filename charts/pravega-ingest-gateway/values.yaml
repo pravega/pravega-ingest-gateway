@@ -1,3 +1,5 @@
+# Default configuration does not use TLS.
+# See /values/samples for other configurations.
 image:
   repository: claudiofahey/pravega-ingest-gateway
   tag: 0.0.1
@@ -5,17 +7,9 @@ ingress:
   enabled: true
   annotations:
     kubernetes.io/ingress.class: nginx-nautilus
-    kubernetes.io/tls-acme: "true"
-  hosts:
-    - pravega-ingest-gateway.examples.xorn.em.sdp.hop.lab.emc.com
-  tls:
-    - hosts:
-        - pravega-ingest-gateway.examples.xorn.em.sdp.hop.lab.emc.com
-      # If secretName is not provided, a self-signed certificate will be used.
-      #secretName: pravega-ingest-gateway-tls
 pravega:
   controller: "tcp://nautilus-pravega-controller.nautilus-pravega.svc.cluster.local:9090"
-  stream: "examples"
+  stream: "example-stream"
   min_segments: 1
   scale_factor: 2
   target_rate_events_per_sec: 100000

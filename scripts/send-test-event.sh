@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -ex
-curl -v -k \
+ROOT_DIR=$(dirname $0)/..
+source ${ROOT_DIR}/scripts/env-local.sh
+
+export CURL_CA_BUNDLE="${ROOT_DIR}/ssl/data/ca.pem"
+
+curl -v \
 --header "Content-Type: application/json" \
 --request POST \
 --data '

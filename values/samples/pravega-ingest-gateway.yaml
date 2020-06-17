@@ -1,0 +1,17 @@
+# Sample that shows how to enable TLS for the Pravega Ingest Gateway.
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: nginx-nautilus
+    kubernetes.io/tls-acme: "true"
+  hosts:
+    - pravega-ingest-gateway.examples.xorn.em.sdp.hop.lab.emc.com
+  tls:
+    - hosts:
+        - pravega-ingest-gateway.examples.xorn.em.sdp.hop.lab.emc.com
+      # If secretName is not provided, a self-signed certificate will be used.
+      secretName: pravega-ingest-gateway.examples.xorn.em.sdp.hop.lab.emc.com-tls
+pravega:
+  # Specify the Pravega controller if Pravega is using TLS.
+  #controller: "tls://nautilus-pravega-controller.xorn.em.sdp.hop.lab.emc.com:443"
+  stream: "sample1"
