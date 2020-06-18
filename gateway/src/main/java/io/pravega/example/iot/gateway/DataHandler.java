@@ -30,7 +30,8 @@ public class DataHandler {
     @Consumes({"application/json"})
     @Produces({"application/json"})
     public String postData(@Context Request request, String data, @PathParam("remoteAddr") String remoteAddr) throws Exception {
-        String timestamp = dateFormat.format(new Date());
+        final long ingestTimestamp = System.currentTimeMillis();
+        final String ingestTimestampStr = dateFormat.format(new Date(ingestTimestamp));
         try {
             // Deserialize the JSON message.
             final ObjectMapper objectMapper = new ObjectMapper();
@@ -52,7 +53,8 @@ public class DataHandler {
                 message.put("RemoteAddr", remoteAddr);
 
                 // Add timestamp to JSON message.
-                message.put("Timestamp", timestamp);
+                message.put("IngestTimestamp", ingestTimestamp);
+                message.put("IngestTimestampStr", ingestTimestampStr);
 
                 // Get or calculate the routing key.
                 final String routingKeyAttributeName = Parameters.getRoutingKeyAttributeName();
