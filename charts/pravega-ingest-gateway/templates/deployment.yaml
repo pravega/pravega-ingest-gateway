@@ -30,6 +30,8 @@ spec:
             value: "{{ .Values.pravega.stream }}"
           - name: PRAVEGA_MIN_NUM_SEGMENTS
             value: "{{ .Values.pravega.min_segments }}"
+          - name: PRAVEGA_REQUIRE_DURABLE_WRITES
+            value: "{{ .Values.pravega.require_durable_writes }}"
           - name: PRAVEGA_SCALE_FACTOR
             value: "{{ .Values.pravega.scale_factor }}"
           - name: PRAVEGA_TARGET_RATE_EVENTS_PER_SEC

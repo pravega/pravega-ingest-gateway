@@ -2,7 +2,7 @@
 # See /values/samples for other configurations.
 image:
   repository: claudiofahey/pravega-ingest-gateway
-  tag: 0.0.1
+  tag: 0.0.2
 ingress:
   enabled: true
   annotations:
@@ -11,5 +11,6 @@ pravega:
   controller: "tcp://nautilus-pravega-controller.nautilus-pravega.svc.cluster.local:9090"
   stream: "example-stream"
   min_segments: 1
+  require_durable_writes: "true"
   scale_factor: 2
   target_rate_events_per_sec: 100000

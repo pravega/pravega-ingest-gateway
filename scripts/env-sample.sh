@@ -1,5 +1,6 @@
+# Make sure that charts/pravega-ingest-gateway/values.yaml matches below values.
 export DOCKER_REPOSITORY=claudiofahey/pravega-ingest-gateway
-export IMAGE_TAG=0.0.1
+export IMAGE_TAG=0.0.2
 
 # Below for Kubernetes
 export NAMESPACE=examples

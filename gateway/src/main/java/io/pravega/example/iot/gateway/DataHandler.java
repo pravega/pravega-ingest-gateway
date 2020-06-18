@@ -33,10 +33,10 @@ public class DataHandler {
         String timestamp = dateFormat.format(new Date());
         try {
             // Deserialize the JSON message.
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode tree = objectMapper.readTree(data);
+            final ObjectMapper objectMapper = new ObjectMapper();
+            final JsonNode tree = objectMapper.readTree(data);
 
-            ArrayNode arrayNode;
+            final ArrayNode arrayNode;
             if (tree instanceof ArrayNode) {
                 arrayNode = (ArrayNode) tree;
             } else if (tree instanceof ObjectNode) {
@@ -47,7 +47,7 @@ public class DataHandler {
             }
 
             for (JsonNode jsonNode : arrayNode) {
-                ObjectNode message = (ObjectNode) jsonNode;
+                final ObjectNode message = (ObjectNode) jsonNode;
                 // Add the remote IP address to JSON message.
                 message.put("RemoteAddr", remoteAddr);
 
@@ -55,8 +55,8 @@ public class DataHandler {
                 message.put("Timestamp", timestamp);
 
                 // Get or calculate the routing key.
-                String routingKeyAttributeName = Parameters.getRoutingKeyAttributeName();
-                String routingKey;
+                final String routingKeyAttributeName = Parameters.getRoutingKeyAttributeName();
+                final String routingKey;
                 if (routingKeyAttributeName.isEmpty()) {
                     routingKey = Double.toString(Math.random());
                 } else {
@@ -66,16 +66,18 @@ public class DataHandler {
 
                 // Write the message to Pravega.
                 Log.debug("routingKey={}, message={}", routingKey, message);
-                final CompletableFuture writeFuture = Main.getWriter().writeEvent(routingKey, message);
+                final CompletableFuture<Void> writeFuture = Main.getWriter().writeEvent(routingKey, message);
 
                 // Wait for acknowledgement that the event was durably persisted.
-                // TODO: Wait should be an option that can be set by each request.
-            //        writeFuture.get();
+                // This provides at-least-once guarantees.
+                if (Parameters.getRequireDurableWrites()) {
+                    writeFuture.get();
+                }
             }
             return "{}";
         }
         catch (Exception e) {
-            Log.error(e.toString());
+            Log.error("Error", e);
             throw e;
         }
     }

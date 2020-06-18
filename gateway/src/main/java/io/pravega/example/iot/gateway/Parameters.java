@@ -38,6 +38,10 @@ class Parameters {
         return getEnvVar("ROUTING_KEY_ATTRIBUTE_NAME", "RemoteAddr");
     }
 
+    public static boolean getRequireDurableWrites() {
+        return Boolean.parseBoolean(getEnvVar("PRAVEGA_REQUIRE_DURABLE_WRITES", "true"));
+    }
+
     private static String getEnvVar(String name, String defaultValue) {
         String value = System.getenv(name);
         if (value == null || value.isEmpty()) {

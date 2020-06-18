@@ -35,6 +35,8 @@ class Main {
 
     public static void main(String[] args) throws Exception {
         Log.info("gateway main: BEGIN");
+        Log.info("Stream: {}/{}", Parameters.getScope(), Parameters.getStreamName());
+        Log.info("RequireDurableWrites: {}", Parameters.getRequireDurableWrites());
 
         URI controllerURI = Parameters.getControllerURI();
         StreamManager streamManager = StreamManager.create(controllerURI);
