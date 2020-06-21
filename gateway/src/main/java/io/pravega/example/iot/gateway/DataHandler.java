@@ -2,6 +2,7 @@ package io.pravega.example.iot.gateway;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.slf4j.Logger;
@@ -17,7 +18,7 @@ import java.util.Date;
 import java.util.TimeZone;
 import java.util.concurrent.CompletableFuture;
 
-@Path("data/{remoteAddr}")
+@Path("/data")
 public class DataHandler {
     private static final Logger Log = LoggerFactory.getLogger(DataHandler.class);
 
@@ -29,6 +30,7 @@ public class DataHandler {
     @POST
     @Consumes({"application/json"})
     @Produces({"application/json"})
+    @Path("/jsonData/{remoteAddr}")
     public String postData(@Context Request request, String data, @PathParam("remoteAddr") String remoteAddr) throws Exception {
         final long ingestTimestamp = System.currentTimeMillis();
         final String ingestTimestampStr = dateFormat.format(new Date(ingestTimestamp));
@@ -68,7 +70,15 @@ public class DataHandler {
 
                 // Write the message to Pravega.
                 Log.debug("routingKey={}, message={}", routingKey, message);
-                final CompletableFuture<Void> writeFuture = Main.getWriter().writeEvent(routingKey, message);
+                // Writing...
+                // Create an immutable writer (in this case using the default settings)
+                final ObjectWriter writer = objectMapper.writer();
+
+                // Use the writer for thread safe access.
+                final byte[] bytes = writer.writeValueAsBytes(message);
+
+
+                final CompletableFuture<Void> writeFuture = Main.getWriter().writeEvent(routingKey, bytes);
 
                 // Wait for acknowledgement that the event was durably persisted.
                 // This provides at-least-once guarantees.
@@ -76,6 +86,43 @@ public class DataHandler {
                     writeFuture.get();
                 }
             }
+            return "{}";
+        }
+        catch (Exception e) {
+            Log.error("Error", e);
+            throw e;
+        }
+    }
+
+    @POST
+    @Path("/rawData/{remoteAddr}")
+    public String postRawData(@Context Request request, byte[] data, @PathParam("remoteAddr") String remoteAddr) throws Exception {
+        final long ingestTimestamp = System.currentTimeMillis();
+        final String ingestTimestampStr = dateFormat.format(new Date(ingestTimestamp));
+        try {
+            if(data == null)
+                return "{DATA Not Received}";
+
+            // Get or calculate the routing key.
+            final String routingKeyAttributeName = Parameters.getRoutingKeyAttributeName();
+            final String routingKey;
+            if (routingKeyAttributeName.isEmpty()) {
+                routingKey = Double.toString(Math.random());
+            }else {
+                routingKey = "default_routingKey";
+            }
+
+            String message = new String(data);
+            Log.debug("routingKey={}, message={}", routingKey, message);
+
+            final CompletableFuture<Void> writeFuture = Main.getWriter().writeEvent(routingKey, data);
+
+            // Wait for acknowledgement that the event was durably persisted.
+            // This provides at-least-once guarantees.
+            if (Parameters.getRequireDurableWrites()) {
+                writeFuture.get();
+            }
+
             return "{}";
         }
         catch (Exception e) {
