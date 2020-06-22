@@ -13,12 +13,14 @@ import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import io.pravega.client.stream.impl.ByteArraySerializer;
 
 import java.net.URI;
 
 class Main {
     private static final Logger Log = LoggerFactory.getLogger(Main.class);
-    private static EventStreamWriter<JsonNode> writer;
+    private static EventStreamWriter<byte[]> writer;
+    private static ByteArraySerializer SERIALIZER = new ByteArraySerializer();
 
     /**
      * Starts Grizzly HTTP server exposing JAX-RS resources defined in this application.
@@ -47,6 +49,7 @@ class Main {
                 .scalingPolicy(ScalingPolicy.byEventRate(
                         Parameters.getTargetRateEventsPerSec(), Parameters.getScaleFactor(), Parameters.getMinNumSegments()))
                 .build();
+
         streamManager.createStream(scope, streamName, streamConfig);
 
         ClientConfig config = ClientConfig.builder().controllerURI(controllerURI)
@@ -55,7 +58,7 @@ class Main {
         EventStreamClientFactory clientFactory = EventStreamClientFactory.withScope(scope, config);
         writer = clientFactory.createEventWriter(
                 streamName,
-                new JsonNodeSerializer(),
+                SERIALIZER,
                 EventWriterConfig.builder().build());
 
         final HttpServer server = startServer();
@@ -63,7 +66,7 @@ class Main {
         Log.info("gateway main: END");
     }
 
-    public static EventStreamWriter<JsonNode> getWriter() {
+    public static EventStreamWriter<byte[]> getWriter() {
         return writer;
     }
 }

@@ -17,4 +17,4 @@ curl -v \
 "humidity": 90.2
 }
 ' \
-${GATEWAY_URL}/data/my_routing_key_1
+${GATEWAY_URL}/data/jsonData/my_routing_key_1
