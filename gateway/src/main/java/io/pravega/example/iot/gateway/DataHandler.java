@@ -91,13 +91,7 @@ public class DataHandler {
     @Path("/rawData/{routingKey}")
     @Produces({"application/json"})
     public String postRawData(@Context Request request, byte[] data, @PathParam("routingKey") String routingKey) throws Exception {
-        final long ingestTimestamp = System.currentTimeMillis();
-        final String ingestTimestampStr = dateFormat.format(new Date(ingestTimestamp));
         try {
-            if (routingKey.isEmpty()) {
-                routingKey = "default_routingKey";
-            }
-
             Log.debug("routingKey={}, message length={}", routingKey, data.length);
 
             final CompletableFuture<Void> writeFuture = Main.getWriter().writeEvent(routingKey, data);
