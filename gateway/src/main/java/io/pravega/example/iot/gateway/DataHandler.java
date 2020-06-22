@@ -70,15 +70,8 @@ public class DataHandler {
 
                 // Write the message to Pravega.
                 Log.debug("routingKey={}, message={}", routingKey, message);
-                // Writing...
-                // Create an immutable writer (in this case using the default settings)
-                final ObjectWriter writer = objectMapper.writer();
 
-                // Use the writer for thread safe access.
-                final byte[] bytes = writer.writeValueAsBytes(message);
-
-
-                final CompletableFuture<Void> writeFuture = Main.getWriter().writeEvent(routingKey, bytes);
+                final CompletableFuture<Void> writeFuture = Main.getWriter().writeEvent(routingKey, objectMapper.writeValueAsBytes(message));
 
                 // Wait for acknowledgement that the event was durably persisted.
                 // This provides at-least-once guarantees.
@@ -95,25 +88,17 @@ public class DataHandler {
     }
 
     @POST
-    @Path("/rawData/{remoteAddr}")
-    public String postRawData(@Context Request request, byte[] data, @PathParam("remoteAddr") String remoteAddr) throws Exception {
+    @Path("/rawData/{routingKey}")
+    @Produces({"application/json"})
+    public String postRawData(@Context Request request, byte[] data, @PathParam("routingKey") String routingKey) throws Exception {
         final long ingestTimestamp = System.currentTimeMillis();
         final String ingestTimestampStr = dateFormat.format(new Date(ingestTimestamp));
         try {
-            if(data == null)
-                return "{DATA Not Received}";
-
-            // Get or calculate the routing key.
-            final String routingKeyAttributeName = Parameters.getRoutingKeyAttributeName();
-            final String routingKey;
-            if (routingKeyAttributeName.isEmpty()) {
-                routingKey = Double.toString(Math.random());
-            }else {
+            if (routingKey.isEmpty()) {
                 routingKey = "default_routingKey";
             }
 
-            String message = new String(data);
-            Log.debug("routingKey={}, message={}", routingKey, message);
+            Log.debug("routingKey={}, message length={}", routingKey, data.length);
 
             final CompletableFuture<Void> writeFuture = Main.getWriter().writeEvent(routingKey, data);
 

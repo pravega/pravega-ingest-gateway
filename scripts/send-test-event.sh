@@ -6,14 +6,15 @@ source ${ROOT_DIR}/scripts/env-local.sh
 export CURL_CA_BUNDLE="${ROOT_DIR}/ssl/data/ca.pem"
 
 curl -v \
---header "Content-Type: application/csv" \
+--header "Content-Type: application/json" \
 --request POST \
 --data '
-"message_id","timestamp","device_id","temperature","humidity","RemoteAddr","IngestTimestamp","IngestTimestampStr"
-"111111","1588203203770","098765","60.96","80.4","my_routing_key_2","1592613114765","2020-06-20T10:31:54.763Z"
-"222222","1588203203770","098765","60.96","80.4","my_routing_key_2","1592613114765","2020-06-20T10:31:54.763Z"
-"333333","1588203203770","098765","60.96","80.4","my_routing_key_2","1592613114765","2020-06-20T10:31:54.763Z"
-"444444","1588203203770","098765","60.96","80.4","my_routing_key_2","1592613114765","2020-06-20T10:31:54.763Z"
-"555555","1588203203770","098765","60.96","80.4","my_routing_key_2","1592613114765","2020-06-20T10:31:54.763Z"
+{
+"message_id": "40e4517d-3aff-480a-b872-cb8f039b2807",
+"timestamp": 1588203203990,
+"device_id": 23456,
+"temperature": 30.96,
+"humidity": 90.2
+}
 ' \
-${GATEWAY_URL}/data/rawData/my_routing_key_2
+${GATEWAY_URL}/jsonData/my_routing_key_1
