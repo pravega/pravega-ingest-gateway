@@ -1,6 +1,5 @@
 package io.pravega.example.iot.gateway;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import io.pravega.client.ClientConfig;
 import io.pravega.client.EventStreamClientFactory;
 import io.pravega.client.admin.StreamManager;
@@ -8,6 +7,7 @@ import io.pravega.client.stream.EventStreamWriter;
 import io.pravega.client.stream.EventWriterConfig;
 import io.pravega.client.stream.ScalingPolicy;
 import io.pravega.client.stream.StreamConfiguration;
+import io.pravega.client.stream.TransactionalEventStreamWriter;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -20,6 +20,7 @@ import java.net.URI;
 class Main {
     private static final Logger Log = LoggerFactory.getLogger(Main.class);
     private static EventStreamWriter<byte[]> writer;
+    private static TransactionalEventStreamWriter<byte[]> transWriter;
     private static ByteArraySerializer SERIALIZER = new ByteArraySerializer();
 
     /**
@@ -60,6 +61,10 @@ class Main {
                 streamName,
                 SERIALIZER,
                 EventWriterConfig.builder().build());
+        transWriter = clientFactory.createTransactionalEventWriter(
+                streamName,
+                SERIALIZER,
+                EventWriterConfig.builder().build());
 
         final HttpServer server = startServer();
         Log.info("Gateway running at {}", Parameters.getGatewayURI());
@@ -68,5 +73,9 @@ class Main {
 
     public static EventStreamWriter<byte[]> getWriter() {
         return writer;
+    }
+
+    public static TransactionalEventStreamWriter<byte[]> getTransactionalWriter() {
+        return transWriter;
     }
 }
