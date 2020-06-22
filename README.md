@@ -16,18 +16,30 @@ JSON events to a Pravega stream.
    ./load-secrets.sh
    ```
 
-3. Copy the sample values file from `values/samples/pravega-ingest-gateway.yaml` to
+3. Copy the sample values file from `values/samples/pravega-ingest-gateway.yaml` or
+   `values/samples/pravega-ingest-gateway-tls.yaml` to
    `values/local/pravega-ingest-gateway.yaml` or any other destination.
    You may name this file anything, but you must use alphanumeric characters and dashes only.
 
 4. Edit this file to use your Pravega stream name and HTTP server FQDN.
    
-5. Deploy the Pravega Ingest Gateway using Helm.
+5. (Optional) If you customized the Java code, compile and deploy the Docker image.
+
+   a. Set DOCKER_REPOSITORY and IMAGE_TAG in scripts/env-local.sh.
+   
+   b. Add matching values for `image.repository` and `image.tag` in values/local/pravega-ingest-gateway.yaml.
+   
+   c. Build and push the Docker image.
+      ```shell script   
+       scripts/build.sh
+       ```
+
+6. Deploy the Pravega Ingest Gateway using Helm.
    ```shell script
    scripts/deploy.sh values/local/pravega-ingest-gateway.yaml
    ```
 
-6. Send a test event.
+7. Send a test event.
    ```shell script
    scripts/send-test-event.sh
    ```

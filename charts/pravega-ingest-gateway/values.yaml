@@ -2,7 +2,7 @@
 # See /values/samples for other configurations.
 image:
   repository: claudiofahey/pravega-ingest-gateway
-  tag: 0.0.2
+  tag: 0.0.3
 ingress:
   enabled: true
   annotations:
